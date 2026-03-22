@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор стратегії | kriuchkov-strategy.com</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #f0f2f5;
+    --bg2:      #e8eaed;
+    --white:    #ffffff;
+    --surface:  #ffffff;
+    --s2:       #f7f8fa;
+
+    --border:   #e2e5ea;
+    --border2:  #d0d4db;
+
+    --text:     #0d1117;
+    --t2:       #3d4450;
+    --t3:       #6b7280;
+    --t4:       #9ca3af;
+    --t5:       #c4c9d1;
+
+    --blue:     #1a56db;
+    --blue-bg:  rgba(26,86,219,0.07);
+
+    --r:  #1a56db;
+    --c:  #6d28d9;
+    --b:  #b45309;
+    --f:  #065f46;
+    --t:  #9d174d;
+
+    --r-bg: rgba(26,86,219,0.06);
+    --c-bg: rgba(109,40,217,0.06);
+    --b-bg: rgba(180,83,9,0.06);
+    --f-bg: rgba(6,95,70,0.06);
+    --t-bg: rgba(157,23,77,0.06);
+
+    --red:    #991b1b;
+    --orange: #92400e;
+    --amber:  #78350f;
+    --green:  #14532d;
+
+    --sh1: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --sh2: 0 4px 12px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+    --sh3: 0 8px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .hidden { display: none !important; }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    height: 56px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+
+  .topbar-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .topbar-mark {
+    width: 28px;
+    height: 28px;
+    background: var(--text);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .topbar-mark svg { width: 14px; height: 14px; }
+
+  .topbar-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .topbar-domain {
+    font-size: 12px;
+    color: var(--t3);
+    font-weight: 400;
+    margin-left: 2px;
+  }
+
+  .topbar-right {
+    font-size: 12px;
+    color: var(--t3);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── CONTAINER ── */
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ──────────────────────────────────────
+     WELCOME
+  ────────────────────────────────────── */
+  #screen-welcome { min-height: calc(100vh - 56px); padding: 80px 0 100px; }
+
+  .w-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue-bg);
+    border: 1px solid rgba(26,86,219,0.14);
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 32px;
+  }
+
+  .w-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 400;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 20px;
+    max-width: 560px;
+  }
+
+  .w-title em {
+    font-style: italic;
+    color: var(--blue);
+  }
+
+  .w-desc {
+    font-size: 16px;
+    color: var(--t2);
+    max-width: 500px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+  }
+
+  /* Formula strip */
+  .formula-strip {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 52px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--sh1);
+    max-width: 540px;
+  }
+
+  .f-cell {
+    flex: 1;
+    padding: 16px 14px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.15s;
+  }
+  .f-cell:last-child { border-right: none; }
+  .f-cell:hover { background: var(--s2); }
+
+  .f-cell-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .f-cell-name {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--t4);
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .w-stats {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 44px;
+  }
+
+  .w-stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .w-stat-lbl {
+    font-size: 12px;
+    color: var(--t3);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .w-divider {
+    width: 1px;
+    background: var(--border);
+    align-self: stretch;
+  }
+
+  .btn-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--text);
+    color: #fff;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 7px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: -0.01em;
+  }
+  .btn-cta:hover { background: #1a1f2e; transform: translateY(-1px); box-shadow: var(--sh3); }
+  .btn-cta .arr { transition: transform 0.15s; }
+  .btn-cta:hover .arr { transform: translateX(3px); }
+
+  /* ──────────────────────────────────────
+     WARNING
+  ────────────────────────────────────── */
+  #screen-warning {
+    min-height: calc(100vh - 56px);
+    display: flex;
+    align-items: center;
+    padding: 60px 0;
+  }
+
+  .warn-wrap {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--sh2);
+    overflow: hidden;
+    max-width: 640px;
+  }
+
+  .warn-stripe {
+    height: 4px;
+    background: linear-gradient(90deg, var(--blue) 0%, #6d28d9 100%);
+  }
+
+  .warn-body-pad { padding: 48px 52px; }
+
+  .warn-icon-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .warn-dot {
+    width: 36px;
+    height: 36px;
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .warn-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--t3);
+  }
+
+  .warn-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.3;
+    margin-bottom: 18px;
+    color: var(--text);
+  }
+
+  .warn-p {
+    font-size: 14px;
+    color: var(--t2);
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+
+  .warn-rule {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 3px solid #f59e0b;
+    border-radius: 0 6px 6px 0;
+    padding: 16px 20px;
+    margin: 22px 0;
+  }
+
+  .warn-rule p {
+    font-size: 13px;
+    color: #78350f;
+    line-height: 1.7;
+  }
+
+  /* ──────────────────────────────────────
+     QUIZ
+  ────────────────────────────────────── */
+  #screen-quiz { padding: 0 0 100px; }
+
+  /* Progress bar — inside topbar */
+  .quiz-progress-bar {
+    position: sticky;
+    top: 56px;
+    z-index: 100;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .qpb-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .qpb-block {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    min-width: 72px;
+  }
+
+  .qpb-track {
+    flex: 1;
+    height: 2px;
+    background: var(--border2);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .qpb-fill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 1px;
+    transition: width 0.3s ease;
+  }
+
+  .qpb-num {
+    font-size: 12px;
+    color: var(--t3);
+    font-weight: 500;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    min-width: 40px;
+    text-align: right;
+  }
+
+  /* block steps indicator */
+  .step-dots {
+    display: flex;
+    gap: 6px;
+    padding: 16px 24px 0;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .step-dot {
+    height: 3px;
+    flex: 1;
+    border-radius: 2px;
+    background: var(--border2);
+    transition: background 0.2s;
+  }
+  .step-dot.done { background: var(--blue); }
+  .step-dot.active { background: var(--text); }
+
+  /* Block header */
+  .block-hd {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 24px 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+
+  .block-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .block-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .block-tag-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .block-en {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--t3);
+  }
+
+  .block-uk {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .block-description {
+    font-size: 14px;
+    color: var(--t2);
+    line-height: 1.75;
+    max-width: 600px;
+    padding: 14px 18px;
+    background: var(--s2);
+    border-left: 2px solid var(--border2);
+    border-radius: 0 6px 6px 0;
+    margin-top: 14px;
+  }
+
+  /* Subzone */
+  .sz-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px;
+    max-width: 760px;
+    margin: 28px auto 16px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--t4);
+  }
+
+  .sz-divider::before,
+  .sz-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Component card */
+  .comp {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 26px 28px;
+    margin: 0 24px 12px;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: var(--sh1);
+    transition: border-color 0.15s;
+  }
+
+  .comp.answered { border-color: var(--border2); }
+
+  .comp-num {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--t5);
+    margin-bottom: 5px;
+  }
+
+  .comp-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+
+  .comp-about {
+    font-size: 13px;
+    color: var(--t3);
+    line-height: 1.65;
+    margin-bottom: 18px;
+  }
+
+  /* Benchmark */
+  .bench {
+    background: var(--s2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+  }
+
+  .bench-lbl {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .bench-txt {
+    font-size: 13px;
+    color: var(--t2);
+    line-height: 1.7;
+  }
+
+  /* Options */
+  .opts { display: flex; flex-direction: column; gap: 5px; }
+
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    cursor: pointer;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    transition: all 0.12s;
+  }
+
+  .opt:hover { border-color: var(--border2); background: var(--s2); }
+
+  .opt.on {
+    border-color: var(--blue);
+    background: var(--blue-bg);
+  }
+
+  .opt-v {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--t4);
+    min-width: 28px;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+
+  .opt.on .opt-v { color: var(--blue); }
+
+  .opt-t {
+    font-size: 12px;
+    color: var(--t3);
+    line-height: 1.55;
+  }
+
+  .opt.on .opt-t { color: var(--t2); }
+
+  /* Nav */
+  .qnav {
+    max-width: 760px;
+    margin: 40px auto 0;
+    padding: 24px 24px 0;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: transparent;
+    color: var(--t3);
+    border: 1px solid var(--border);
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .btn-back:hover { border-color: var(--border2); color: var(--t2); background: var(--s2); }
+
+  .btn-next {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: 11px 24px;
+    border-radius: 6px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: -0.01em;
+  }
+  .btn-next:hover:not(:disabled) { background: #1648c4; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,86,219,0.25); }
+  .btn-next:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* ──────────────────────────────────────
+     RESULTS
+  ────────────────────────────────────── */
+  #screen-results { padding: 0 0 100px; }
+
+  .res-banner {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 56px 0 52px;
+    margin-bottom: 40px;
+  }
+
+  .res-banner-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: flex-end;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .res-score-area { flex-shrink: 0; }
+
+  .res-kicker {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--t3);
+    margin-bottom: 8px;
+  }
+
+  .res-number {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(72px, 14vw, 108px);
+    font-weight: 600;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+  }
+
+  .res-unit {
+    font-size: 0.32em;
+    font-weight: 400;
+    opacity: 0.4;
+    vertical-align: super;
+    letter-spacing: 0;
+  }
+
+  .n-red    { color: #c0392b; }
+  .n-orange { color: #b45309; }
+  .n-amber  { color: #92400e; }
+  .n-green  { color: #065f46; }
+
+  .res-meta { flex: 1; min-width: 220px; padding-bottom: 8px; }
+
+  .res-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    margin-bottom: 14px;
+  }
+
+  .b-red    { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+  .b-orange { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+  .b-amber  { background: #fffbeb; color: #78350f; border: 1px solid #fde68a; }
+  .b-green  { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+
+  .res-desc {
+    font-size: 14px;
+    color: var(--t2);
+    line-height: 1.7;
+    max-width: 360px;
+  }
+
+  /* Alert */
+  .res-alert {
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #7f1d1d;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  /* Section */
+  .res-section { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  .sec-hd {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--t3);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sec-gap { margin-bottom: 44px; }
+
+  /* Block cards */
+  .blocks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 44px;
+  }
+
+  .bcard {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    box-shadow: var(--sh1);
+  }
+
+  .bcard-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .bcard-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .bcard-en {
+    font-size: 10px;
+    color: var(--t4);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    margin-top: 3px;
+  }
+
+  .bcard-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .bcard-bar-track {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .bcard-bar-fill {
+    height: 100%;
+    border-radius: 1px;
+    transition: width 1s ease;
+  }
+
+  .bcard-uk {
+    font-size: 11px;
+    color: var(--t4);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+
+  .bcard-subzone {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--t4);
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Gaps */
+  .gap-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 8px;
+    box-shadow: var(--sh1);
+  }
+
+  .gap-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+
+  .gap-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 3px 9px;
+    border-radius: 4px;
+  }
+
+  .gap-sep { font-size: 12px; color: var(--t4); }
+
+  .gap-diff-tag {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--t3);
+    background: var(--s2);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .gap-body {
+    font-size: 13px;
+    color: var(--t2);
+    line-height: 1.6;
+  }
+
+  /* Profile */
+  .profile-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 32px;
+    box-shadow: var(--sh1);
+    margin-bottom: 44px;
+  }
+
+  .profile-body {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.8;
+  }
+
+  /* CTA */
+  .cta-card {
+    background: var(--text);
+    border-radius: 12px;
+    padding: 44px 48px;
+    text-align: center;
+    box-shadow: var(--sh3);
+  }
+
+  .cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+
+  .cta-body {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    max-width: 400px;
+    margin: 0 auto 28px;
+  }
+
+  .cta-site {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 2px;
+    transition: color 0.14s, border-color 0.14s;
+    margin-bottom: 24px;
+    display: block;
+  }
+  .cta-site:hover { color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.5); }
+
+  .btn-restart {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: transparent;
+    color: rgba(255,255,255,0.4);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.14s;
+  }
+  .btn-restart:hover { color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.3); }
+
+  /* Animations */
+  .fade-up {
+    animation: fadeUp 0.35s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .warn-body-pad { padding: 32px 24px; }
+    .comp { margin-left: 16px; margin-right: 16px; padding: 20px; }
+    .w-stats { gap: 20px; }
+    .blocks-grid { grid-template-columns: 1fr 1fr; }
+    .cta-card { padding: 32px 24px; }
+    .res-banner-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .formula-strip { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-brand">
+      <div class="topbar-mark">
+        <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="7" width="3" height="6" fill="white" opacity="0.5"/>
+          <rect x="5.5" y="4" width="3" height="9" fill="white" opacity="0.75"/>
+          <rect x="10" y="1" width="3" height="12" fill="white"/>
+        </svg>
+      </div>
+      <span class="topbar-name">Калькулятор стратегії <span class="topbar-domain">· kriuchkov-strategy.com</span></span>
+    </div>
+    <span class="topbar-right" id="topbar-right">Бета-версія</span>
+  </div>
+</div>
+
+<div id="app">
+
+  <!-- ══════════════════════════════
+       WELCOME
+  ══════════════════════════════ -->
+  <div id="screen-welcome">
+    <div class="wrap">
+      <div class="w-kicker">Інструмент стратегічної оцінки</div>
+
+      <h1 class="w-title">Калькулятор <em>справжньої</em> стратегії</h1>
+      <div style="font-family:'Playfair Display',serif; font-size:18px; font-weight:400; font-style:italic; color:var(--t3); margin-top:-12px; margin-bottom:28px; letter-spacing:-0.01em;">The True Strategy Calculator</div>
+
+      <p class="w-desc">
+        Більшість компаній впевнені що мають стратегію. Перевірте — яка вона у вас.
+      </p>
+
+      <p class="w-desc" style="margin-top:-16px; color:var(--t3); font-size:15px;">
+        Справжня стратегія — це конструкція з п&#39;яти критично важливих елементів. Якщо один слабкий — стратегія стає вразливою. Якщо слабких декілька — конструкція не тримається взагалі. Калькулятор показує де саме у вашій стратегії є слабкі місця.
+      </p>
+
+      <!-- Formula -->
+      <div class="formula-strip">
+        <div class="f-cell">
+          <span class="f-cell-letter" style="color:var(--r)">R</span>
+          <span class="f-cell-name">Reality<br>Insight</span>
+        </div>
+        <div class="f-cell">
+          <span class="f-cell-letter" style="color:var(--c)">C</span>
+          <span class="f-cell-name">Consequent<br>Aims</span>
+        </div>
+        <div class="f-cell">
+          <span class="f-cell-letter" style="color:var(--b)">B</span>
+          <span class="f-cell-name">Barriers</span>
+        </div>
+        <div class="f-cell">
+          <span class="f-cell-letter" style="color:var(--f)">F</span>
+          <span class="f-cell-name">Focused<br>Efforts</span>
+        </div>
+        <div class="f-cell">
+          <span class="f-cell-letter" style="color:var(--t)">T</span>
+          <span class="f-cell-name">Tension<br>Capacity</span>
+        </div>
+      </div>
+
+      <div class="w-stats">
+        <div>
+          <div class="w-stat-val">25</div>
+          <div class="w-stat-lbl">Компонентів</div>
+        </div>
+        <div class="w-divider"></div>
+        <div>
+          <div class="w-stat-val">~15 хв</div>
+          <div class="w-stat-lbl">Час</div>
+        </div>
+        <div class="w-divider"></div>
+        <div>
+          <div class="w-stat-val">5 блоків</div>
+          <div class="w-stat-lbl">R · C · B · F · T</div>
+        </div>
+      </div>
+
+      <button class="btn-cta" onclick="showWarning()">
+        Почати оцінку
+        <span class="arr">→</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       WARNING
+  ══════════════════════════════ -->
+  <div id="screen-warning" class="hidden">
+    <div class="wrap">
+      <div class="warn-wrap">
+        <div class="warn-stripe"></div>
+        <div class="warn-body-pad">
+          <div class="warn-icon-row">
+            <div class="warn-dot">⚡</div>
+            <div class="warn-label">Важливо перед початком</div>
+          </div>
+          <div class="warn-title">Цей інструмент працює тільки якщо відповідаєш чесно</div>
+          <p class="warn-p">
+            Перед кожним питанням ти побачиш опис того, як це виглядає коли зроблено справді добре. Прочитай уважно перед тим як оцінювати себе.
+          </p>
+          <div class="warn-rule">
+            <p>Оцінка <strong>0.2</strong> — це не «я думаю про це» і не «ми плануємо». Це «у нас є конкретна перевірена ясність яку можу прямо зараз пояснити команді».</p>
+          </div>
+          <p class="warn-p">Якщо є сумнів — ставити <strong>0.1</strong>. Без бенчмарку людина оцінює себе відносно власного уявлення про норму — і майже завжди завищує.</p>
+          <div style="margin-top:32px">
+            <button class="btn-next" onclick="startQuiz()">Зрозумів, починаємо →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       QUIZ
+  ══════════════════════════════ -->
+  <div id="screen-quiz" class="hidden">
+    <div class="quiz-progress-bar">
+      <div class="qpb-inner">
+        <span class="qpb-block" id="qpb-label">Блок R</span>
+        <div class="qpb-track">
+          <div class="qpb-fill" id="qpb-fill" style="width:0%"></div>
+        </div>
+        <span class="qpb-num" id="qpb-num">0 / 25</span>
+      </div>
+    </div>
+
+    <div class="step-dots" id="step-dots">
+      <div class="step-dot active" data-i="0"></div>
+      <div class="step-dot" data-i="1"></div>
+      <div class="step-dot" data-i="2"></div>
+      <div class="step-dot" data-i="3"></div>
+      <div class="step-dot" data-i="4"></div>
+    </div>
+
+    <div id="quiz-body"></div>
+
+    <div class="qnav">
+      <button class="btn-back" id="btn-back" onclick="prevBlock()">← Назад</button>
+      <button class="btn-next" id="btn-next" onclick="nextBlock()" disabled>
+        <span id="btn-next-txt">Далі</span> →
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       RESULTS
+  ══════════════════════════════ -->
+  <div id="screen-results" class="hidden">
+    <div id="results-body"></div>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const BLOCKS = [
+  {
+    id:'R', name:'Reality Insight', uk:'Розуміння реальності',
+    color:'#1a56db', bg:'rgba(26,86,219,0.06)',
+    desc:'Перший блок — про розуміння реальності. Ми дивимось і у вікно (що відбувається навколо) і в дзеркало (що є всередині організації). Для зовнішнього середовища — важливо не плутати сценарії середовища з планами поведінки. Для внутрішнього — важливо спиратись на конкретні показники, а не на відчуття.',
+    comps:[
+      { id:'R1', title:'Сили що змінюють зовнішнє середовище',
+        about:'Будь-яка галузь постійно трансформується під впливом зовнішніх сил. Стратегічне мислення починається з розуміння які саме сили зараз змінюють правила гри.',
+        bench:'Можна конкретно назвати 3-5 ключових сил що трансформують галузь — зміна поведінки клієнтів, технологічний зсув, регуляторні зміни, нові типи конкурентів. Для кожної сили є розуміння: в якому напрямку діє, з якою швидкістю, який вплив на організацію. Спирається на факти — не на загальні слова «ринок змінюється».',
+        opts:[{v:0,t:'Немає чіткого розуміння які сили формують середовище. Реагуємо на події по факту без системного погляду'},{v:0.1,t:'Є загальне відчуття що відбувається, можемо назвати 1-2 сили. Але без глибини і конкретики — швидше інтуїція ніж аналіз'},{v:0.2,t:'Можемо конкретно назвати 3-5 ключових сил, пояснити напрямок і швидкість кожної. Підтверджено фактами'}]},
+      { id:'R2', title:'Сценарії середовища майбутнього',
+        about:'Сценарії — це не прогноз і не план. Це кілька принципово різних світів які можуть виникнути залежно від того як розвинуться ключові невизначеності.',
+        bench:'Визначено 1-2 ключові невизначеності. Комбінації дають 2-4 базові сценарії. Кожен описаний як конкретний «світ». Чітко розрізняємо: що є стабільним (константи), що змінюється передбачувано (тренди), що справді невизначено (розвилки).',
+        opts:[{v:0,t:'Плануємо в одному майбутньому. Або є «оптимістичний/песимістичний» прогноз — але не сценарії середовища'},{v:0.1,t:'Розуміємо що майбутнє може бути різним але сценарії не сформульовані чітко і не опрацьовані як різні «світи»'},{v:0.2,t:'Є 2-4 конкретних сценарії побудованих на ключових невизначеностях. Чітко розрізняємо константи, тренди і невизначеності'}]},
+      { id:'R3', title:'Розуміння стейкхолдерів',
+        about:'Стратегія реалізується через людей і залежить від людей. Поверхневе розуміння стейкхолдерів — одна з головних причин провалу стратегій.',
+        bench:'Є карта ключових стейкхолдерів: інтереси, страхи, очікування від нас. Є гіпотези як поведінка кожного ключового стейкхолдера зміниться в різних сценаріях. Перевірено реальними спостереженнями.',
+        opts:[{v:0,t:'Знаємо стейкхолдерів за назвою і роллю. Їх глибинна мотивація і логіка поведінки не опрацьовані'},{v:0.1,t:'Є розуміння основних інтересів але воно неповне і не перевірене. Про зміну поведінки в різних сценаріях не думали'},{v:0.2,t:'Є конкретна картина інтересів, страхів і очікувань кожного ключового стейкхолдера. Є гіпотези як їх поведінка зміниться в різних сценаріях'}]},
+      { id:'R4', title:'Знання ключових показників організації',
+        about:'Щоб приймати стратегічні рішення — потрібно знати реальний стан організації в цифрах. Не відчуття — а конкретні показники з динамікою і інтерпретацією.',
+        bench:'Є система показників у чотирьох категоріях: фінансові, клієнтські, процесні, випереджаючі. По кожному показнику: актуальна цифра, динаміка за останні 3-6 періодів, розуміння де добре і де погано — на основі порівняння з собою в часі і з еталоном.',
+        opts:[{v:0,t:'Немає системи показників. Або є лише 1-2 фінансові цифри без розуміння динаміки. Управління за відчуттями'},{v:0.1,t:'Є показники у 2-3 категоріях, є деяке розуміння динаміки. Але система неповна, порівняння з еталоном відсутнє'},{v:0.2,t:'Є система показників у всіх 4 категоріях з актуальними цифрами і динамікою. Вміємо інтерпретувати на основі порівняння з собою і з еталоном'}]},
+      { id:'R5', title:'Розуміння внутрішніх обмежень і сліпих зон',
+        about:'Кожна організація має внутрішні обмеження і сліпі зони. Здатність чесно їх бачити — ознака стратегічної зрілості.',
+        bench:'Можна конкретно назвати 2-3 внутрішніх обмеження що найбільше стримують організацію. Усвідомлюємо свої «сліпі зони» — що не знаємо про себе але мали б знати.',
+        opts:[{v:0,t:'Внутрішні обмеження не ідентифіковані або сприймаються як «тимчасові труднощі». Відчуття що «знаємо свій бізнес» без чесного аналізу'},{v:0.1,t:'Є відчуття що є обмеження і прогалини, можемо назвати деякі. Але системного погляду немає'},{v:0.2,t:'Можемо конкретно назвати ключові внутрішні обмеження і пояснити як вони впливають на стратегію. Усвідомлюємо свої сліпі зони'}]},
+    ]
+  },
+  {
+    id:'C', name:'Consequent Aims', uk:'Цілі та стратегічне бачення',
+    color:'#6d28d9', bg:'rgba(109,40,217,0.06)',
+    desc:'Другий блок — про цілі і бачення. Візія має враховувати світ майбутнього а не ігнорувати його сигнали. Стратегічні цілі — це не будь-які цілі, а лише найголовніші кінцеві результуючі оцифровані. Місія і Візія — різні речі.',
+    comps:[
+      { id:'C1', title:'Візія — напрямок руху з урахуванням майбутнього',
+        about:'Візія — бажаний стан організації в майбутньому і напрямок руху до нього. Вона має враховувати сигнали про те яким може стати світ навколо.',
+        bench:'Є чітко сформульована Візія яка описує бажаний стан в горизонті 3-7 років. Вона не ігнорує ключові сили і невизначеності зовнішнього середовища. Класична помилка якої немає: Кодак будував Візію навколо масштабування плівкового бізнесу ігноруючи цифровий горизонт.',
+        opts:[{v:0,t:'Візії немає або вона сформульована як загальні слова. Або повністю ігнорує зміни у зовнішньому середовищі'},{v:0.1,t:'Є уявлення про напрямок але нечітке або не пов\'язане з аналізом майбутнього середовища. Є ризик «ефекту Кодак»'},{v:0.2,t:'Є конкретна Візія в горизонті 3-7 років побудована з урахуванням ключових сигналів майбутнього середовища. Надихає і при цьому реалістична'}]},
+      { id:'C2', title:'Місія — що несемо світу',
+        about:'Місія — відповідь на питання що організація несе світу і для кого існує. Це не те саме що Візія. Місія базується на стабільній системі цінностей.',
+        bench:'Є чітко сформульована Місія яка відповідає: для кого існуємо, яку цінність несемо, чим відрізняємось. Місія не плутається з Візією. Базується на системі цінностей організації яка стабільна незалежно від зовнішніх змін.',
+        opts:[{v:0,t:'Місії немає або вона плутається з Візією. Немає чіткого розуміння для кого існує організація'},{v:0.1,t:'Є загальне розуміння Місії але нечітке або Місія і Візія змішані'},{v:0.2,t:'Є конкретна Місія яка відповідає на питання для кого, яку цінність, чим унікальні. Відмінна від Візії і базується на стабільній системі цінностей'}]},
+      { id:'C3', title:'Стратегічні цілі — головні кінцеві результати',
+        about:'Стратегічні цілі — це невелика кількість найголовніших кінцевих результуючих цілей — фінансових і нефінансових — оцифрованих і прив\'язаних до горизонту стратегування.',
+        bench:'Є 3-7 стратегічних цілей які є саме кінцевими результуючими — не процесними, не проміжними. Кожна оцифрована — є конкретне значення і горизонт досягнення.',
+        opts:[{v:0,t:'Немає чітких стратегічних цілей. Або є великий список різнорівневих бажань і активностей які називаються «цілями»'},{v:0.1,t:'Є кілька цілей але вони різнорівневі, не всі оцифровані, або їх занадто багато без пріоритизації'},{v:0.2,t:'Є 3-7 чітких кінцевих результуючих цілей (фінансових і нефінансових), оцифрованих з горизонтом. Описують стан — не дії'}]},
+      { id:'C4', title:'Робастність цілей — перевірка на сценарії',
+        about:'Сценарний погляд на майбутнє вимагає перевірки стратегічних цілей — чи залишаються вони актуальними в кожному з можливих сценаріїв.',
+        bench:'Стратегічні цілі перевірені через призму кожного побудованого сценарію середовища. Є відповідь: «якщо реалізується сценарій А — цілі залишаються актуальними?» Ідеальний результат — цілі робастні: актуальні в усіх сценаріях.',
+        opts:[{v:0,t:'Цілі не перевірялись через призму різних сценаріїв. Будуємо в одному майбутньому'},{v:0.1,t:'Є розуміння що цілі можуть потребувати коректив але систематичної перевірки не проводилось'},{v:0.2,t:'Стратегічні цілі перевірені на релевантність до кожного сценарію. Є розуміння які цілі робастні а які потребують коректив'}]},
+      { id:'C5', title:'Готовність переглядати — стратегія як гіпотеза',
+        about:'Стратегія — найкраща поточна гіпотеза а не вирок. Якщо реальність змінилась суттєво — цілі мають переглядатись.',
+        bench:'Є чітке розуміння різниці між стабільним (Місія, Візія, цінності) і змінним (стратегічні цілі, фокуси зусиль). Є реальна практика перегляду цілей при суттєвих змінах середовища.',
+        opts:[{v:0,t:'Цілі сприймаються як незмінні або навпаки — змінюються хаотично. Немає розуміння що є стабільним а що змінним'},{v:0.1,t:'Є розуміння що цілі можуть змінюватись але немає чіткої практики і критеріїв коли і як'},{v:0.2,t:'Є чітке розуміння що стабільне і що змінне. Є практика перегляду цілей при суттєвих змінах середовища'}]},
+    ]
+  },
+  {
+    id:'B', name:'Barriers', uk:'Перешкоди та ризики',
+    color:'#b45309', bg:'rgba(180,83,9,0.06)',
+    desc:'Третій блок — про перешкоди і ризики. «Люди вирішують не ті проблеми які потрібно вирішувати — а ті які розуміють і бачать.» Якісний аналіз бар\'єрів — це системна робота: побачити повне поле через матрицю, докопатись до кореневих причин, виділити критичні.',
+    comps:[
+      { id:'B1', title:'Матриця бар\'єрів — повне поле перешкод',
+        about:'Бар\'єри мають дві осі: зовнішні/внутрішні і існуючі/майбутні. Це матриця 2×2 з чотирма квадрантами. Більшість бачать тільки один-два квадранти.',
+        bench:'Аналіз проведений по всіх чотирьох квадрантах: зовнішні існуючі, зовнішні майбутні, внутрішні існуючі, внутрішні майбутні. Немає «сліпих квадрантів» — поле переглянуте повністю.',
+        opts:[{v:0,t:'Аналіз бар\'єрів проводився хаотично або взагалі не проводився. Бачимо тільки частину поля'},{v:0.1,t:'Є спроба системного аналізу але деякі квадранти суттєво недооцінені або пропущені'},{v:0.2,t:'Проведений системний аналіз по всіх чотирьох квадрантах матриці. Немає свідомо пропущених зон'}]},
+      { id:'B2', title:'Дерево проблем — від симптомів до кореня',
+        about:'Більшість зупиняються на симптомах. Дерево проблем дозволяє дійти від поверхневих проявів до глибинних кореневих причин.',
+        bench:'Для ключових бар\'єрів прослідкований ланцюжок причинності: симптом → причина → глибша причина → корінь. Наприклад: не «мало продажів» → а «ціннісна пропозиція не відповідає новим очікуванням клієнтів бо продукт не оновлювався 3 роки» (корінь).',
+        opts:[{v:0,t:'Бар\'єри сформульовані як симптоми без аналізу кореневих причин'},{v:0.1,t:'Є спроба дійти до кореня але аналіз неповний. Деякі бар\'єри опрацьовані глибше інші — залишились на рівні симптомів'},{v:0.2,t:'Для ключових бар\'єрів прослідкований ланцюжок причинності до кореня. Є чітка відповідь чому бар\'єр існує і чому досі не подоланий'}]},
+      { id:'B3', title:'Пріоритизація — 1-3 критичних бар\'єри',
+        about:'З повного поля бар\'єрів потрібно виділити 1-3 критичних — ті що реально блокують рух до головних цілей.',
+        bench:'Виділено 1-3 критичних бар\'єри з чітким обґрунтуванням: чому саме вони головні, як пов\'язані з досягненням стратегічних цілей. Є логіка чому решта менш критична. Список не містить 15 «однаково важливих» перешкод.',
+        opts:[{v:0,t:'Немає пріоритизації. Є великий рівнозначний список або взагалі не аналізували'},{v:0.1,t:'Є спроба виділити головне але пріоритизація нечітка або обґрунтування відсутнє'},{v:0.2,t:'Виділено 1-3 критичних бар\'єри з чітким обґрунтуванням чому саме вони головні і як пов\'язані з цілями'}]},
+      { id:'B4', title:'Стратегія роботи з бар\'єрами — три категорії рішень',
+        about:'Не всі бар\'єри потрібно долати. Стратегічне мислення розподіляє бар\'єри на три категорії: долаємо, переводимо в умови середовища, свідомо ігноруємо.',
+        bench:'Для кожного ідентифікованого бар\'єру є чітке рішення до якої категорії він належить: долаємо (основний ресурс) / умови середовища (враховуємо але не витрачаємо ресурс) / свідомо ігноруємо (менш критичні).',
+        opts:[{v:0,t:'Немає розрізнення між цими трьома категоріями. Або намагаються долати все підряд або ігнорують без свідомого рішення'},{v:0.1,t:'Є інтуїтивний розподіл але він не явний і не обґрунтований'},{v:0.2,t:'Для кожного бар\'єру є чітке усвідомлене рішення: долаємо / умова середовища / свідомо ігноруємо. Рішення обґрунтовані'}]},
+      { id:'B5', title:'Найтонший лід — найвразливіше місце стратегії',
+        about:'Кожна стратегія має найвразливіше місце — точку де одна невдача може обвалити всю конструкцію. Знати де найтонший лід — ознака стратегічної зрілості.',
+        bench:'Є чітке розуміння де найвразливіше місце стратегії. Є відповідь: «якщо щось одне піде не так — що це буде?» Є реальні дії щоб зміцнити або хеджувати цю вразливість.',
+        opts:[{v:0,t:'Немає розуміння де найвразливіше місце. Або відчуття що «все під контролем» без чесного аналізу'},{v:0.1,t:'Є відчуття де найтонший лід але воно не сформульоване чітко і немає плану дій'},{v:0.2,t:'Є чітке розуміння найвразливішого місця. Є план дій і реальні кроки щоб зміцнити або хеджувати цю вразливість'}]},
+    ]
+  },
+  {
+    id:'F', name:'Focused Efforts', uk:'Фокус і пріоритизація',
+    color:'#065f46', bg:'rgba(6,95,70,0.06)',
+    desc:'Четвертий блок — про фокус зусиль. Фокус — це не список активностей і не план дій. Це невелика кількість напрямків (3-5, максимум 7) кожен з яких виходить з конкретного критичного бар\'єру. Якщо фокусів більше 7 — це вже розфокус.',
+    comps:[
+      { id:'F1', title:'Кількість фокусів — концентрація а не розпорошення',
+        about:'Стратегія — мистецтво відмови. Справжній фокус передбачає що свідомо обираємо 3-5 (максимум 7) головних напрямків зусиль — і відмовляємось від решти.',
+        bench:'Є 3-5 чітко сформульованих фокусів зусиль. Не більше 7. Є чітке розуміння від яких напрямків свідомо відмовились і чому.',
+        opts:[{v:0,t:'Фокусів немає або їх більше 10. Є великий список «пріоритетних» напрямків без реальної пріоритизації'},{v:0.1,t:'Є спроба виділити фокуси але їх 8-15 або вони нечітко сформульовані'},{v:0.2,t:'Є 3-5 (максимум 7) чітко сформульованих фокусів. Є розуміння чому саме вони і від чого свідомо відмовились'}]},
+      { id:'F2', title:'Зв\'язок з бар\'єрами — фокуси виходять з перешкод',
+        about:'Ключова логіка стратегії: саме бар\'єри визначають що буде фокусами зусиль. Кожен фокус — відповідь на конкретний критичний бар\'єр.',
+        bench:'Для кожного фокусу можна чітко назвати який конкретний критичний бар\'єр він долає. Зв\'язок прямий: «цей фокус долає ось цей бар\'єр який блокує досягнення ось цієї цілі».',
+        opts:[{v:0,t:'Фокуси сформульовані незалежно від бар\'єрів. Або бар\'єри взагалі не аналізувались — одразу від цілей до планів дій'},{v:0.1,t:'Є відчуття зв\'язку між фокусами і бар\'єрами але він не прямий. Деякі фокуси мають логіку інші — «просто важливі напрямки»'},{v:0.2,t:'Кожен фокус прямо виходить з конкретного критичного бар\'єру. Зв\'язок явний і обґрунтований: бар\'єр → фокус → ціль'}]},
+      { id:'F3', title:'Структура фокусу — підціль і портфель проектів',
+        about:'Кожен фокус зусиль — не просто напрямок. Це повноцінна стратегічна одиниця: має свій цільовий показник і свій портфель стратегічних проектів.',
+        bench:'Для кожного фокусу є: (1) підціль з вимірним показником і горизонтом — «до кінця 2026 досягти X»; (2) портфель з 2-5 стратегічних проектів. Підцілі фокусів у сумі забезпечують досягнення стратегічних цілей.',
+        opts:[{v:0,t:'Фокуси є як напрямки але без цільових показників і портфелів проектів. Або є просто список активностей'},{v:0.1,t:'Деякі фокуси мають показники або проекти але система неповна. Немає чіткого зв\'язку між підцілями і загальними цілями'},{v:0.2,t:'Кожен фокус має вимірний цільовий показник і портфель стратегічних проектів. Підцілі складаються в загальні стратегічні цілі'}]},
+      { id:'F4', title:'Метод важеля — найефективніший спосіб подолання бар\'єру',
+        about:'Справжній стратегічний фокус — це вибір найефективнішого методу подолання конкретного бар\'єру. Того що дає непропорційно великий результат відносно витраченого ресурсу.',
+        bench:'Для кожного фокусу є обґрунтування чому саме такий підхід є найефективнішим. Не «будемо покращувати продажі» — а «змінюємо один критичний вузол у воронці бо це дає найбільший ефект при мінімальному ресурсі».',
+        opts:[{v:0,t:'Немає розуміння методу важеля. Фокуси сформульовані як загальні напрямки без обґрунтування чому саме такий підхід найефективніший'},{v:0.1,t:'Є інтуїтивне відчуття де важіль але воно не сформульоване явно. Або важіль є в деяких фокусах але не у всіх'},{v:0.2,t:'Для кожного фокусу обґрунтовано чому саме такий підхід є найефективнішим. Є розуміння точки важеля'}]},
+      { id:'F5', title:'Відмова від другорядного — реальний а не декларативний фокус',
+        about:'Фокус існує тільки якщо є відмова. Якщо від нічого не відмовились — фокусу немає а є його ілюзія.',
+        bench:'Є конкретний перелік того від чого свідомо відмовились. Реальний розподіл ресурсів (бюджет, час керівництва, команди) відповідає фокусам. Люди в організації знають що є головним і що зупинено.',
+        opts:[{v:0,t:'Від нічого не відмовились. Всі попередні ініціативи продовжуються плюс додались нові «пріоритети». Ресурс не відповідає фокусам'},{v:0.1,t:'Є розуміння що треба відмовитись від чогось але реальних відмов мало. Або відмови задекларовані але ресурс все одно розпорошений'},{v:0.2,t:'Є конкретний список відмов від другорядного. Реальний розподіл ресурсів відповідає фокусам. Організація знає що є головним і що зупинено'}]},
+    ]
+  },
+  {
+    id:'T', name:'Tension Capacity', uk:'Здатність тримати курс',
+    color:'#9d174d', bg:'rgba(157,23,77,0.06)',
+    desc:'П\'ятий блок — про здатність утримати стратегію в реальності. Стратегія після сесії — це стартова стратегія яка буде змінюватись. Стратегування — постійний скіл і дія а не разова подія. Це вимагає здатності витримувати напругу розбіжності між очікуваним і реальним.',
+    comps:[
+      { id:'T1', title:'Ритм і структура стратегічного управління',
+        about:'Стратегія живе тільки якщо є регулярний ритм управління нею. Без ритму і структури — навіть найкраща стратегія перетворюється на документ в шухляді.',
+        bench:'Є регулярні стратегічні зустрічі з чіткою структурою — agenda з п\'яти елементів: моніторинг зовнішнього, внутрішнього, рішення про зміни в стратегії, ретроспектива по проектах, пул рішень. Є відповідальний і зафіксована частота.',
+        opts:[{v:0,t:'Немає регулярних стратегічних зустрічей. Або є зустрічі але без структури — «поговорили і розійшлись без рішень»'},{v:0.1,t:'Є спроби проводити стратегічні зустрічі але без чіткої структури і регулярності'},{v:0.2,t:'Є регулярні стратегічні зустрічі з чіткою структурою всіх п\'яти елементів. Є відповідальний і зафіксована частота'}]},
+      { id:'T2', title:'Інфраструктура моніторингу і управління портфелем',
+        about:'Якісне стратегічне управління потребує інфраструктури: дашбордів для моніторингу середовища і показників організації та платформи для управління портфелем проектів.',
+        bench:'Є три компоненти: дашборд зовнішнього середовища, дашборд внутрішнього середовища, платформа управління портфелем стратегічних проектів — статус, ресурси, відповідальні, ризики. Стратегічні зустрічі проходять на основі актуальних даних.',
+        opts:[{v:0,t:'Немає жодної з цих компонент. Стратегічні рішення приймаються без актуальних даних'},{v:0.1,t:'Є окремі елементи але системи як такої немає. Дані неповні або нерегулярні'},{v:0.2,t:'Є всі три компоненти. Стратегічні зустрічі проходять на основі актуальних даних з дашбордів'}]},
+      { id:'T3', title:'Нова парадигма: стратегія як постійний скіл',
+        about:'В олдскулі стратегія = розробили раз на рік і виконуємо. В сучасному підході — постійна адаптація. Але більшість топів сидять по вуха в операційній роботі і тушать пожежі.',
+        bench:'Є прийняття нової парадигми: стратегія — постійний живий процес. Є свідоме розрізнення двох режимів: операційний і стратегічний. Є реальна практика фільтру стратегії: перед новою задачею — «це відповідає нашим фокусам чи це шум?»',
+        opts:[{v:0,t:'Стратегія сприймається як разова подія. Керівники повністю поглинені операційним. Немає фільтру стратегії'},{v:0.1,t:'Є розуміння що стратегія потребує постійної уваги але на практиці операційне поглинає стратегічне. Фільтр є в теорії але не застосовується'},{v:0.2,t:'Є прийняття що стратегування — постійний скіл і дія. Є захищений час. Є реальна практика фільтру стратегії'}]},
+      { id:'T4', title:'Здатність витримати розбіжність',
+        about:'Реальна динаміка результатів майже завжди відрізняється від очікуваної. Tension Capacity — здатність витримати цю розбіжність і розрізнити: це нормально чи справжній сигнал що стратегія потребує перегляду.',
+        bench:'Є реалістичне розуміння що початкова динаміка може відставати від очікуваної. Є чіткі критерії розрізнення: коли розбіжність — нормальний процес, а коли — сигнал що щось фундаментально не так. Рішення приймаються на основі даних а не емоцій.',
+        opts:[{v:0,t:'Немає розуміння феномену розбіжності. При перших ознаках відставання — або паніка і хаотичні зміни або повне заперечення'},{v:0.1,t:'Є розуміння що розбіжність нормальна але немає чітких критеріїв коли витримувати а коли переглядати. Рішення ситуативні'},{v:0.2,t:'Є розуміння феномену і чіткі критерії розрізнення. Є внутрішні опори. Рішення приймаються на основі даних'}]},
+      { id:'T5', title:'Якість взаємодії в управлінській команді',
+        about:'Стратегію реалізують люди — і якість взаємодії в управлінській команді прямо впливає на якість реалізації.',
+        bench:'В управлінській команді є п\'ять ознак якісної взаємодії: довіра і відкритість, продуктивний конфлікт (пошук кращого рішення), реальні спільні зобов\'язання, взаємна підзвітність, пріоритет загальної цілі над захистом свого підрозділу.',
+        opts:[{v:0,t:'Системні дисфункції: або псевдозгода або псевдоконфлікт. Рішення не виконуються або формально. Кожен захищає свій підрозділ'},{v:0.1,t:'Є окремі елементи якісної взаємодії але системно команда не є справжньою командою. Деякі дисфункції впливають на реалізацію'},{v:0.2,t:'Є довіра, продуктивний конфлікт, реальні спільні зобов\'язання, взаємна підзвітність і пріоритет загальної цілі'}]},
+    ]
+  }
+];
+
+const GAPS=[
+  {a:'R',b:'C',aw:true,txt:'Амбітні цілі без розуміння реальності — будують на піску'},
+  {a:'R',b:'C',aw:false,txt:'Розуміють реальність але не можуть сформулювати цілі — аналіз без вектору'},
+  {a:'C',b:'B',aw:true,txt:'Є цілі але не бачать що реально заважає — ціль без шляху'},
+  {a:'C',b:'B',aw:false,txt:'Бачать перешкоди але незрозуміло до чого долають — рух без напрямку'},
+  {a:'B',b:'F',aw:true,txt:'Бачать перешкоди але зусилля розпорошені — діагноз є, ліки немає'},
+  {a:'B',b:'F',aw:false,txt:'Велика активність без удару в головний бар\'єр — зайнятість без руху'},
+  {a:'F',b:'T',aw:true,txt:'Є правильний фокус але не вистачає витривалості — спринт замість марафону'},
+  {a:'F',b:'T',aw:false,txt:'Є витривалість але без фокусу — наполегливо йдуть у всіх напрямках'},
+  {a:'R',b:'B',aw:false,txt:'Розуміють середовище але не бачать що конкретно блокує рух'},
+  {a:'R',b:'B',aw:true,txt:'Бачать внутрішні перешкоди без зовнішнього контексту — мікроскоп без телескопу'},
+  {a:'C',b:'F',aw:false,txt:'Є амбітні цілі але дії розпорошені — ціль є, фокусу немає'},
+  {a:'C',b:'F',aw:true,txt:'Сфокусовані зусилля але цілі розмиті — швидко рухаються невідомо куди'},
+  {a:'B',b:'T',aw:false,txt:'Знають що треба зробити але немає витривалості це зробити'},
+  {a:'B',b:'T',aw:true,txt:'Є витривалість але перешкоди не ідентифіковані — б\'ються об невидиму стіну'},
+  {a:'R',b:'F',aw:false,txt:'Глибоко розуміють реальність але зусилля не сфокусовані — знання без дії'},
+  {a:'R',b:'F',aw:true,txt:'Сфокусовані зусилля без розуміння середовища — точний удар у хибну ціль'},
+  {a:'C',b:'T',aw:false,txt:'Є чіткі цілі але немає витривалості їх досягати — амбіція без стійкості'},
+  {a:'C',b:'T',aw:true,txt:'Є витривалість але цілі нечіткі — наполегливо йдуть незрозуміло куди'},
+  {a:'R',b:'T',aw:false,txt:'Розуміють що змінюється але не можуть адаптуватись — бачать айсберг, не встигають повернути'},
+  {a:'R',b:'T',aw:true,txt:'Завзято реалізують застарілу стратегію без оновлення розуміння реальності'},
+];
+
+// ── State ──
+let S={block:0,scores:{}};
+
+// ── Nav ──
+function show(id){
+  ['screen-welcome','screen-warning','screen-quiz','screen-results']
+    .forEach(s=>document.getElementById(s).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+function showWarning(){show('screen-warning');}
+function startQuiz(){S.block=0;show('screen-quiz');renderBlock();}
+function prevBlock(){
+  if(S.block>0){S.block--;renderBlock();}else show('screen-warning');
+  window.scrollTo(0,0);
+}
+function nextBlock(){
+  const bl=BLOCKS[S.block];
+  if(!bl.comps.every(c=>S.scores[c.id]!==undefined))return;
+  if(S.block<BLOCKS.length-1){S.block++;renderBlock();window.scrollTo(0,0);}
+  else showResults();
+}
+
+// ── Render ──
+function renderBlock(){
+  const bl=BLOCKS[S.block];
+  const ans=Object.keys(S.scores).length;
+
+  // progress bar
+  document.getElementById('qpb-label').textContent=bl.id+' · '+bl.name;
+  document.getElementById('qpb-label').style.color=bl.color;
+  document.getElementById('qpb-fill').style.width=(ans/25*100)+'%';
+  document.getElementById('qpb-num').textContent=ans+' / 25';
+
+  // step dots
+  document.querySelectorAll('.step-dot').forEach((d,i)=>{
+    d.classList.remove('done','active');
+    if(i<S.block)d.classList.add('done');
+    if(i===S.block)d.classList.add('active');
+    d.style.background = i===S.block ? bl.color : i<S.block ? '#9ca3af' : '';
+  });
+
+  document.getElementById('btn-back').style.display=S.block===0?'none':'';
+  document.getElementById('btn-next-txt').textContent=
+    S.block===BLOCKS.length-1?'Отримати результати':'Наступний блок';
+
+  let h=`
+    <div class="block-hd fade-up">
+      <div class="block-tag">
+        <span class="block-letter" style="color:${bl.color}">${bl.id}</span>
+        <div class="block-tag-text">
+          <span class="block-en">${bl.name}</span>
+          <span class="block-uk">${bl.uk}</span>
+        </div>
+      </div>
+      <div class="block-description">${bl.desc}</div>
+    </div>
+  `;
+
+  bl.comps.forEach((comp,idx)=>{
+    if(bl.id==='R'&&idx===0) h+=`<div class="sz-divider">Зовнішня реальність</div>`;
+    if(bl.id==='R'&&idx===3) h+=`<div class="sz-divider">Внутрішня реальність</div>`;
+    const sel=S.scores[comp.id];
+    h+=`
+      <div class="comp ${sel!==undefined?'answered':''} fade-up" id="card-${comp.id}"
+           style="animation-delay:${idx*.06}s">
+        <div class="comp-num">Компонент ${comp.id}</div>
+        <div class="comp-title" style="color:${bl.color}">${comp.title}</div>
+        <div class="comp-about">${comp.about}</div>
+        <div class="bench">
+          <div class="bench-lbl">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4.5" stroke="#1a56db" stroke-width="1"/><path d="M5 3v2.5l1.5 1" stroke="#1a56db" stroke-width="1" stroke-linecap="round"/></svg>
+            Як це виглядає коли зроблено справді добре
+          </div>
+          <div class="bench-txt">${comp.bench}</div>
+        </div>
+        <div class="opts">
+          ${comp.opts.map(o=>`
+            <button class="opt ${sel===o.v?'on':''}" onclick="pick('${comp.id}',${o.v})">
+              <span class="opt-v">${o.v}</span>
+              <span class="opt-t">${o.t}</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById('quiz-body').innerHTML=h;
+  syncBtn();
+}
+
+function pick(cid,val){
+  S.scores[cid]=val;
+  const card=document.getElementById('card-'+cid);
+  card.classList.add('answered');
+  const bl=BLOCKS[S.block];
+  const comp=bl.comps.find(c=>c.id===cid);
+  card.querySelectorAll('.opt').forEach((btn,i)=>{
+    btn.classList.toggle('on',comp.opts[i].v===val);
+  });
+  const ans=Object.keys(S.scores).length;
+  document.getElementById('qpb-fill').style.width=(ans/25*100)+'%';
+  document.getElementById('qpb-num').textContent=ans+' / 25';
+  syncBtn();
+}
+
+function syncBtn(){
+  document.getElementById('btn-next').disabled=
+    !BLOCKS[S.block].comps.every(c=>S.scores[c.id]!==undefined);
+}
+
+// ── Calc ──
+function bScore(id){return BLOCKS.find(b=>b.id===id).comps.reduce((s,c)=>s+(S.scores[c.id]||0),0);}
+function calcIdx(){
+  const ids=['R','C','B','F','T'];
+  return Math.pow(ids.reduce((p,id)=>p*Math.max(bScore(id),0.005),1),0.2);
+}
+function colorInfo(s){
+  if(s<0.25)return{nc:'n-red',   bc:'b-red',   e:'🔴',lbl:'Критична зона — стратегії практично немає'};
+  if(s<0.50)return{nc:'n-orange',bc:'b-orange', e:'🟠',lbl:'Є окремі елементи, але конструкція не тримається'};
+  if(s<0.75)return{nc:'n-amber', bc:'b-amber',  e:'🟡',lbl:'Стратегія є, але багато суттєвих прогалин'};
+  return           {nc:'n-green', bc:'b-green',  e:'🟢',lbl:'Цілісна сильна стратегія з надійною основою'};
+}
+function bColor(id){return BLOCKS.find(b=>b.id===id).color;}
+
+function topGaps(bs){
+  let c=[];
+  GAPS.forEach(g=>{
+    const d=Math.abs(bs[g.a]-bs[g.b]);
+    if(d<0.08)return;
+    if((bs[g.a]<bs[g.b])===g.aw)c.push({...g,diff:d});
+  });
+  c.sort((a,b)=>b.diff-a.diff);
+  const seen=new Set(),out=[];
+  for(const x of c){
+    const k=[x.a,x.b].sort().join('-');
+    if(!seen.has(k)&&out.length<3){seen.add(k);out.push(x);}
+  }
+  return out;
+}
+
+function makeProfile(bs,idx){
+  const n={R:'Реальність',C:'Цілі',B:'Бар\'єри',F:'Фокус',T:'Витривалість'};
+  const ids=['R','C','B','F','T'];
+  const weak=ids.filter(id=>bs[id]<0.4);
+  const strong=ids.filter(id=>bs[id]>=0.7);
+  let s=[];
+  if(idx>=0.75)s.push('Стратегія має цілісну і надійну основу — ключові елементи опрацьовані і пов\'язані між собою.');
+  else if(idx>=0.5)s.push('Стратегія має хорошу основу, але є суттєві прогалини які знижують шанси на успішну реалізацію.');
+  else if(idx>=0.25)s.push('Окремі елементи стратегії опрацьовані, але конструкція в цілому не тримається — занадто багато слабких місць.');
+  else s.push('Стратегія практично відсутня або знаходиться на початковому рівні опрацювання.');
+  if(weak.length>0&&weak.length<=2)
+    s.push(`Найбільша увага потрібна: ${weak.map(id=>n[id]).join(' і ')} — саме тут найбільший потенціал для зміцнення конструкції.`);
+  else if(weak.length>2)
+    s.push(`Слабких місць багато: ${weak.map(id=>n[id]).join(', ')} — потрібна системна робота по всьому контуру.`);
+  if(strong.length>0)
+    s.push(`Сильна сторона — ${strong.map(id=>n[id]).join(' і ')}: тут є реальна ясність яку можна використати як опору.`);
+  return s.join(' ');
+}
+
+// ── Results ──
+function showResults(){
+  show('screen-results');
+  const ids=['R','C','B','F','T'];
+  const bs={};ids.forEach(id=>bs[id]=bScore(id));
+  const idx=calcIdx();
+  const pct=Math.round(idx*100);
+  const ci=colorInfo(idx);
+  const zeros=ids.filter(id=>bs[id]===0);
+  const gaps=topGaps(bs);
+  const prof=makeProfile(bs,idx);
+
+  let h='<div class="fade-up">';
+
+  // banner
+  h+=`
+    <div class="res-banner">
+      <div class="res-banner-inner">
+        <div class="res-score-area">
+          <div class="res-kicker">Індекс цілісності стратегії</div>
+          <div class="res-number ${ci.nc}">${pct}<span class="res-unit">%</span></div>
+        </div>
+        <div class="res-meta">
+          <div class="res-badge ${ci.bc}">${ci.e} ${ci.lbl}</div>
+          <div class="res-desc">S = R × C × B × F × T — це множення, не додавання. Слабкий блок обвалює весь результат.</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const wrap = `<div class="res-section">`;
+  const wrapEnd = `</div>`;
+
+  // alerts
+  if(zeros.length>0){
+    h+=wrap;
+    if(zeros.length===1){
+      const bl=BLOCKS.find(b=>b.id===zeros[0]);
+      h+=`<div class="res-alert">⚠️ Блок <strong>${bl.id} (${bl.name})</strong> фактично відсутній. Нульовий блок обвалює всю конструкцію — це ключовий методологічний сигнал.</div>`;
+    }else{
+      h+=`<div class="res-alert">⚠️ Кілька критичних порожнеч: <strong>${zeros.join(', ')}</strong>. Конструкція дуже вразлива.</div>`;
+    }
+    h+=wrapEnd;
+  }
+
+  // blocks
+  h+=wrap+`<div class="sec-hd sec-gap">Результати по блоках</div><div class="blocks-grid">`;
+  BLOCKS.forEach(bl=>{
+    const sc=bs[bl.id];
+    const scC=sc<0.25?'#c0392b':sc<0.5?'#b45309':sc<0.75?'#92400e':'#065f46';
+    let sub='';
+    if(bl.id==='R'){
+      const ext=['R1','R2','R3'].reduce((s,id)=>s+(S.scores[id]||0),0);
+      const int_=['R4','R5'].reduce((s,id)=>s+(S.scores[id]||0),0);
+      sub=`<div class="bcard-subzone"><span>Зовн.: <strong>${ext.toFixed(1)}</strong>/0.6</span><span>Внутр.: <strong>${int_.toFixed(1)}</strong>/0.4</span></div>`;
+    }
+    h+=`
+      <div class="bcard">
+        <div class="bcard-top">
+          <div>
+            <div class="bcard-letter" style="color:${bl.color}">${bl.id}</div>
+            <div class="bcard-en">${bl.name}</div>
+          </div>
+          <span class="bcard-score" style="color:${scC}">${sc.toFixed(2)}</span>
+        </div>
+        <div class="bcard-bar-track">
+          <div class="bcard-bar-fill" style="width:${sc*100}%;background:${bl.color}"></div>
+        </div>
+        <div class="bcard-uk">${bl.uk}</div>
+        ${sub}
+      </div>
+    `;
+  });
+  h+=`</div>`+wrapEnd;
+
+  // gaps
+  if(gaps.length>0){
+    h+=wrap+`<div class="sec-hd sec-gap">Ключові розриви між блоками</div>`;
+    gaps.forEach(g=>{
+      const wId=g.aw?g.a:g.b;
+      const sId=g.aw?g.b:g.a;
+      h+=`
+        <div class="gap-card">
+          <div class="gap-top">
+            <span class="gap-tag" style="color:${bColor(wId)};background:${bColor(wId)}14;border:1px solid ${bColor(wId)}30">${wId} — слабкий</span>
+            <span class="gap-sep">↔</span>
+            <span class="gap-tag" style="color:${bColor(sId)};background:${bColor(sId)}14;border:1px solid ${bColor(sId)}30">${sId} — сильний</span>
+            <span class="gap-diff-tag">Δ ${Math.round(g.diff*100)}%</span>
+          </div>
+          <div class="gap-body">${g.txt}</div>
+        </div>
+      `;
+    });
+    h+=wrapEnd;
+  }
+
+  // profile
+  h+=wrap+`
+    <div class="sec-hd sec-gap">Загальний профіль</div>
+    <div class="profile-card"><div class="profile-body">${prof}</div></div>
+  `+wrapEnd;
+
+  // cta
+  h+=wrap+`
+    <div class="cta-card">
+      <div class="cta-title">Що далі?</div>
+      <div class="cta-body">Результат показує де є ясність, а де туман. Наступний крок — конкретна робота з найслабшим блоком. Стратегія — постійний скіл, а не разова подія.</div>
+      <a href="https://kriuchkov-strategy.com" target="_blank" class="cta-site">kriuchkov-strategy.com</a>
+      <div><button class="btn-restart" onclick="restart()">↺ Пройти ще раз</button></div>
+    </div>
+  `+wrapEnd;
+
+  h+='</div>';
+  document.getElementById('results-body').innerHTML=h;
+}
+
+function restart(){S={block:0,scores:{}};show('screen-welcome');}
+</script>
+</body>
+</html>
